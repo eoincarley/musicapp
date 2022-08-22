@@ -18,7 +18,7 @@ def get_minio_client(access, secret):
     Setup client. Note I had to create a new Service Account with the following
     credentials in the Minio Console.
 """
-minio_client = get_minio_client('EoinCarley', 'EXAMPLEKEY')
+minio_client = get_minio_client('testkey', 'secretkey')
 bucket_name = 'songs'
 
 # Create a bucket
@@ -29,23 +29,8 @@ try:
         print('Bucket \'%s\' already exists' %(bucket_name))
 except S3Error as exc:
     print("error occurred.", exc)
-
-
-# Upload a file to the desired bucket via the minio client object
-file = './static/pianosample.mp3'
-try:
-    with open(file, 'rb') as testfile:
-        statdata = os.stat(file)
-        minio_client.put_object(
-            bucket_name,
-            file,
-            testfile,
-            statdata.st_size
-        )
-    testfile.close()
-except S3Error as exc:
-    print("error occurred.", exc)
-
+import pdb
+pdb.set_trace()
 
 # List bucket contents
 objects = minio_client.list_objects(bucket_name)
