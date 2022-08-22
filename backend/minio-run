@@ -1,0 +1,8 @@
+docker run -t -d \
+  -p 9000:9000 \
+  -p 9001:9001 \
+  --name minioTest \
+  -e "MINIO_ACCESS_KEY=testkey" \
+  -e "MINIO_SECRET_KEY=testsecret" \
+  -v /home/eoincarley/spotify/data:/data \
+  quay.io/minio/minio server /data --console-address ":9001"

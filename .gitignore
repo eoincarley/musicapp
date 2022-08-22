@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ignore mp3 files.
+backend/static/*
+data
+
