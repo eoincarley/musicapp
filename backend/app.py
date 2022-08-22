@@ -8,7 +8,7 @@ app = Flask(__name__)
 def get_minio_client(access, secret):
 
     client = Minio(
-        'localhost:9000',
+        '172.17.0.2:9000',
         access_key = access,
         secret_key = secret,
         secure = False
@@ -20,7 +20,7 @@ def get_minio_client(access, secret):
 @app.route('/', methods=['POST', 'GET'])
 def home():
 
-    minio_client = get_minio_client('EoinCarley', 'EXAMPLEKEY')
+    minio_client = get_minio_client('testkey', 'secretkey')
     bucket_name = 'songs'
     songs = minio_client.list_objects(bucket_name)
 
