@@ -129,6 +129,5 @@ dmypy.json
 .pyre/
 
 # Ignore mp3 files.
-backend/static/*
-data
+app/static/*
 

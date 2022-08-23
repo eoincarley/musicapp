@@ -1,0 +1,4 @@
+Flask==2.2.2
+Minio==7.1.11
+flask_sqlalchemy
+pymysql
