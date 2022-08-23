@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 import datetime
 import pymysql
 import os
+import datetime
+import numpy as np
 
 pymysql.install_as_MySQLdb()
 app = Flask(__name__)
@@ -13,7 +15,7 @@ db = SQLAlchemy(app)
 
 # Defining the Songs table columns for the MySQL database.
 
-class Songs(db.Model):
+class dbSongs(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     songname = db.Column(db.String(255))
@@ -38,21 +40,17 @@ class Songs(db.Model):
 
 def insert_song_data(minio_objects):
 
-    for songs in minio_objects:
 
-        id = 1
-        song = Songs(id=songid, 
-                    songname='', 
-                    artist='', 
-                    album='',
-                    genre='',
-                    duration='')
+    id = datetime.datetime.utcnow().timestamp()*np.random.uniform()
+    song = dbSongs(id=id, 
+                songname='a', 
+                artist='b', 
+                album='c',
+                genre='d',
+                duration='2')
 
-        db.session.add(song)
+    db.session.add(song)
 
-    db.session.commit()
-
-    return None
 
 
 def get_minio_client(access, secret):
@@ -60,7 +58,7 @@ def get_minio_client(access, secret):
     # Note 172.17.0.2 is the address of the minio container that the Flask container needs.
     # If Flask is not running in its own container then localhost will work.
     client = Minio(
-        '172.17.0.2:9000', 
+        'localhost:9000', 
         access_key = access,
         secret_key = secret,
         secure = False
@@ -79,6 +77,7 @@ def home():
     # Create database tables and insert minio song data into database.
     db.create_all()
     result = insert_song_data(songs)
+    #db.session.commit()
     
 
     return render_template('index.html', songs=songs)
