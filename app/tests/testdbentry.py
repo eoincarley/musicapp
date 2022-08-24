@@ -26,14 +26,25 @@ class Songs(db.Model):
         str
             String version representation
         """
-        return f'<(Spectrogram: {self.id}, {self.songname})>'
+        return f'<(Songs: {self.id}, {self.songname})>'
 
 
 db.create_all()
 song = Songs(id=1, songname='test')
 db.session.add(song)
+song = Songs(id=2, songname='test')
+db.session.add(song)
+song = Songs(id=3, songname='test')
+db.session.add(song)
 db.session.commit()
+#///
 
-import pdb
-pdb.set_trace()
+songids = [1,2,3,4]
+
+pk = Songs.__mapper__.primary_key[0]
+items = Songs.query.filter(pk.in_(songids)).all()
+exist_ids = [item.id for item in items]
+result = list(set(exist_ids)^set(songids)) # list of song ids not in db.
+
+#db.session.query(Songs).filter(Songs.id.not_in([1, 2, 3, 4]))
 

@@ -85,9 +85,9 @@
         </div>
 
         <div class="center">
-            {%- for song in songs -%}
+            {%- for song in songlist -%}
             <audio title="Song" controls>
-               <source  src="./static/{{song.object_name}}" type="audio/mp3">
+               <source  src="./static/{{song}}" type="audio/mp3">
             </audio>
             {% endfor -%}
         </div>
