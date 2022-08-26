@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from minio import Minio
 from minio.error import S3Error
 from flask_sqlalchemy import SQLAlchemy
@@ -10,8 +10,9 @@ import numpy as np
 
 pymysql.install_as_MySQLdb()
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@172.17.0.3:3306/spotifydb' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@localhost:3306/spotifydb' 
 db = SQLAlchemy(app)
+
 
 
 class dbSongs(db.Model):
@@ -45,6 +46,8 @@ def insert_song_db(minio_objs):
   
     db.create_all()
 
+    # NB: This function could be improved a lot:
+
     # Loop through Minio objects and check for duplicates in the database.
     # This loop will become expensive for a large amount of objects.
     # Replace it by SQL query of which song ids already exist in db.
@@ -71,19 +74,19 @@ def insert_song_db(minio_objs):
     return None
 
 
-
 def get_minio_client(access, secret):
 
     # Note 172.17.0.2 is the address of the minio container that the Flask container needs.
     # If Flask is not running in its own container then localhost will work.
     client = Minio(
-        '172.17.0.2:9000', 
+        'localhost:9000', 
         access_key = access,
         secret_key = secret,
         secure = False
     )
 
     return client
+
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
@@ -93,9 +96,10 @@ def home():
     songs = minio_client.list_objects(bucket_name)
     insert_song_db(songs)
 
-    songlist = [obj.object_name for obj in minio_client.list_objects(bucket_name)]
+    songurls = [minio_client.presigned_get_object("songs", obj.object_name) 
+                    for obj in minio_client.list_objects(bucket_name)]
 
-    return render_template('index.html', songlist=songlist)
+    return render_template('index.html', songlist=songurls)
 
 
 if __name__ == "__main__":

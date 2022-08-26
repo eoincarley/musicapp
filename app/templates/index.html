@@ -87,16 +87,15 @@
         <div class="center">
             {%- for song in songlist -%}
             <audio title="Song" controls>
-               <source  src="./static/{{song}}" type="audio/mp3">
+               <source  src="{{song}}" type="audio/mp3">
             </audio>
             {% endfor -%}
         </div>
 
+
      </div>
 
  
-
-  
 
 </body>
 </html>

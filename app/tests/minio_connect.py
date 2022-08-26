@@ -39,5 +39,5 @@ for obj in objects:
     print(obj.bucket_name, obj.object_name, obj.last_modified, \
             obj.etag, obj.size, obj.content_type)
     
-
+#url = client.presigned_get_object("songs", "my-object")
 
