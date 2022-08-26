@@ -42,12 +42,17 @@ class dbSongs(db.Model):
 
 
 def insert_song_db(minio_objs):
-
+  
     db.create_all()
 
     # Loop through Minio objects and check for duplicates in the database.
     # This loop will become expensive for a large amount of objects.
     # Replace it by SQL query of which song ids already exist in db.
+    # Note iteration over the minio object also means you lose access
+    # to the data. This is because the generator in the loop is yielding
+    # values over a stream that are not stored in memory, so they are lost
+    # Another call to the minio client will retrieve the data again.
+    
     for minio_obj in minio_objs:
         instance = dbSongs.query.filter_by(id=minio_obj.etag).first()
         if not instance: 
@@ -58,7 +63,6 @@ def insert_song_db(minio_objs):
                             minio_bukcet = minio_obj.bucket_name,
                             filename = minio_obj.object_name,
                             filesize = minio_obj.size)
-
             db.session.add(song)
         else:
             print('Song %s already exists in database with id %s.' %(minio_obj.object_name, minio_obj.etag), flush=True)
@@ -81,22 +85,20 @@ def get_minio_client(access, secret):
 
     return client
 
-
 @app.route('/', methods=['POST', 'GET'])
 def home():
 
     minio_client = get_minio_client('testkey', 'secretkey')
     bucket_name = 'songs'
     songs = minio_client.list_objects(bucket_name)
-    songlist = [obj.object_name for obj in songs]
-
-    # Create database tables and insert minio song data into database.
     insert_song_db(songs)
+
+    songlist = [obj.object_name for obj in minio_client.list_objects(bucket_name)]
 
     return render_template('index.html', songlist=songlist)
 
 
 if __name__ == "__main__":
-   
+
     port = int(os.environ.get('PORT', 5002))
     app.run(debug=True, host='0.0.0.0', port=port)
