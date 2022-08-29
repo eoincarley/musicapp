@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, flash, render_template, request, redirect
 from minio import Minio
 from minio.error import S3Error
 from flask_sqlalchemy import SQLAlchemy
+from forms import MusicSearchForm
 import datetime
 import pymysql
 import os
@@ -10,6 +11,7 @@ import numpy as np
 
 pymysql.install_as_MySQLdb()
 app = Flask(__name__)
+app.secret_key = "super secret key"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@localhost:3306/spotifydb' 
 db = SQLAlchemy(app)
 
@@ -91,11 +93,20 @@ def get_minio_client(access, secret):
 @app.route('/', methods=['POST', 'GET'])
 def home():
 
+    # Setup Minio client, get data and add it to the database
     minio_client = get_minio_client('testkey', 'secretkey')
     bucket_name = 'songs'
     songs = minio_client.list_objects(bucket_name)
     insert_song_db(songs)
 
+    # Receive data from the search item.
+    search = MusicSearchForm(request.form)
+    if request.method == 'POST':
+        search_string = search.data['search']
+    else:
+        search_string = None
+       
+    # Return song names and file locations. Could render this from the DB.
     songnames = [obj.object_name
                     for obj in minio_client.list_objects(bucket_name)]
 
@@ -104,7 +115,13 @@ def home():
 
     songinfo = list(zip(songnames, songurls))
 
-    return render_template('index.html', songlist=songinfo)
+    # If search item request, search songinfo. This could also be done from the db.
+    # If song is in db then search the minio bucket for the song. That would prevent
+    # lots of search items being returned many times.
+    if search_string:
+       songinfo = [songtuple for songtuple in songinfo if search_string in songtuple[0]]
+
+    return render_template('index.html', songlist=songinfo, form=search, searchitem=search_string)
 
 
 if __name__ == "__main__":
