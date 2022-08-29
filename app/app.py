@@ -96,10 +96,15 @@ def home():
     songs = minio_client.list_objects(bucket_name)
     insert_song_db(songs)
 
+    songnames = [obj.object_name
+                    for obj in minio_client.list_objects(bucket_name)]
+
     songurls = [minio_client.presigned_get_object("songs", obj.object_name) 
                     for obj in minio_client.list_objects(bucket_name)]
 
-    return render_template('index.html', songlist=songurls)
+    songinfo = list(zip(songnames, songurls))
+
+    return render_template('index.html', songlist=songinfo)
 
 
 if __name__ == "__main__":

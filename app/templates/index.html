@@ -21,7 +21,7 @@
         <div class="simp-playlist">
           <ul>
             {%- for song in songlist -%}
-                <li><span class="simp-source" data-src="{{song}}">Song</span><span class="simp-desc">Song</span></li>
+                <li><span class="simp-source" data-src="{{song[1]}}">{{song[0]}}</span><span class="simp-desc">{{song[0]}}</span></li>
             {% endfor -%}  
           </ul>
         </div>
