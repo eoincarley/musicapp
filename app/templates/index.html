@@ -2,75 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <style>
-
-    @import url(https://fonts.googleapis.com/css?family=Open+Sans);
-
-    body{
-    
-    background: url("static/galaxy.jpg") no-repeat center center fixed;
-    -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-    opacity: 0.6
-    font-family: 'Open Sans', sans-serif;
-    }
-
-       
-    h1 {text-align: center; 
-        color: white;
-        font-family: courier;}
-
-    .search {
-    width: 100%;
-    position: relative;
-    display: flex;
-    }
-
-    .searchTerm {
-    width: 100%;
-    border: 3px solid black;
-    border-right: none;
-    padding: 5px;
-    height: 20px;
-    border-radius: 5px 0 0 5px;
-    outline: none;
-    color: black;
-    }
-
-    .searchTerm:focus{
-    color: black;
-    }
-
-    .searchButton {
-    width: 40px;
-    height: 36px;
-    border: 1px solid black;
-    background: black;
-    text-align: center;
-    color: white;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-    font-size: 20px;
-    }
-
-    /*Resize the wrap to see the search bar change!*/
-    .wrap{
-    width: 30%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    }
-
-    .center {
-    margin: auto;
-    width: 100%;
-    padding: 30px;
-    }
-
-</style>
+    <link rel="stylesheet" href="static/css/musicplayerstyle.css">
 </head>
 <body>
 
@@ -84,17 +16,21 @@
           </button>
         </div>
 
-        <div class="center">
+        
+        <div class="simple-audio-player" id="simp" data-config='{"shide_top":false,"shide_btm":false,"auto_load":false}'>
+        <div class="simp-playlist">
+          <ul>
             {%- for song in songlist -%}
-            <audio title="Song" controls>
-               <source  src="{{song}}" type="audio/mp3">
-            </audio>
-            {% endfor -%}
+                <li><span class="simp-source" data-src="{{song}}">Song</span><span class="simp-desc">Song</span></li>
+            {% endfor -%}  
+          </ul>
         </div>
-
+         </div>  
 
      </div>
 
+
+     <script type="text/javascript" src="static/js/mediaplayer.js"></script>
  
 
 </body>
