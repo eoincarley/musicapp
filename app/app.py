@@ -12,7 +12,7 @@ import numpy as np
 pymysql.install_as_MySQLdb()
 app = Flask(__name__)
 app.secret_key = "super secret key"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@localhost:3306/spotifydb' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@172.17.0.3:3306/spotifydb' 
 db = SQLAlchemy(app)
 
 
@@ -79,8 +79,10 @@ def get_minio_client(access, secret):
 
     # Note 172.17.0.2 is the address of the minio container that the Flask container needs.
     # If Flask is not running in its own container then localhost will work.
+    # Note the container IP was not providing the mp3 objects. Replaced with the docker gateway
+    # IP and that seems to have worked.
     client = Minio(
-        'localhost:9000', 
+        '192.168.0.234:9000', 
         access_key = access,
         secret_key = secret,
         secure = False
