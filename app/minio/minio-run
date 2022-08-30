@@ -2,7 +2,12 @@ docker run -t -d \
   -p 9000:9000 \
   -p 9001:9001 \
   --name minioTest \
+  --ip 172.20.0.14 \
   -e "MINIO_ROOT_USER=testkey" \
   -e "MINIO_ROOT_PASSWORD=secretkey" \
-  -v /home/eoincarley/spotify/backend/static:/data \
+  -v /home/eoincarley/spotify/app/static:/data \
   quay.io/minio/minio server /data --console-address ":9001"
+
+
+
+

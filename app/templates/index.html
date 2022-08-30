@@ -22,8 +22,6 @@
           </button>
             -->
         </div>
-
-       
         
         <div class="simple-audio-player" id="simp" data-config='{"shide_top":false,"shide_btm":false,"auto_load":false}'>
         <div class="simp-playlist">
@@ -34,6 +32,13 @@
           </ul>
         </div>
         </div>  
+        <!--
+        {%- for song in songlist -%}
+        <audio controls>
+          <source src="{{song[1]}}" type="audio/ogg">
+        </audio>
+        {% endfor -%}  
+        -->
      </div>
 
      <script type="text/javascript" src="static/js/mediaplayer.js"></script>

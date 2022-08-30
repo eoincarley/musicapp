@@ -4,8 +4,8 @@ import os
 
 def get_minio_client(access, secret):
 
-    client = Minio(
-        'localhost:9000',
+    client = Minio(endpoint=
+        '172.19.0.2:9000',
         access_key = access,
         secret_key = secret,
         secure = False
@@ -18,7 +18,7 @@ def get_minio_client(access, secret):
     Setup client. Note I had to create a new Service Account with the following
     credentials in the Minio Console.
 """
-minio_client = get_minio_client('testkey', 'secretkey')
+minio_client = get_minio_client('EoinCarley', 'EXAMPLEKEY')
 bucket_name = 'songs'
 
 # Create a bucket
@@ -29,8 +29,7 @@ try:
         print('Bucket \'%s\' already exists' %(bucket_name))
 except S3Error as exc:
     print("error occurred.", exc)
-import pdb
-pdb.set_trace()
+
 
 # List bucket contents
 objects = minio_client.list_objects(bucket_name)
@@ -39,5 +38,7 @@ for obj in objects:
     print(obj.bucket_name, obj.object_name, obj.last_modified, \
             obj.etag, obj.size, obj.content_type)
     
-#url = client.presigned_get_object("songs", "my-object")
+
+url = minio_client.presigned_get_object("songs", obj.object_name)
+    #import pdb ; pdb.set_trace()
 

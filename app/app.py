@@ -16,7 +16,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@localhost:3306/
 db = SQLAlchemy(app)
 
 
-
 class dbSongs(db.Model):
 
     # Defining the Songs table columns for the MySQL database.
@@ -110,7 +109,7 @@ def home():
     songnames = [obj.object_name
                     for obj in minio_client.list_objects(bucket_name)]
 
-    songurls = [minio_client.presigned_get_object("songs", obj.object_name) 
+    songurls = [minio_client.presigned_get_object("songs", obj.object_name)
                     for obj in minio_client.list_objects(bucket_name)]
 
     songinfo = list(zip(songnames, songurls))
@@ -119,7 +118,8 @@ def home():
     # If song is in db then search the minio bucket for the song. That would prevent
     # lots of search items being returned many times.
     if search_string:
-       songinfo = [songtuple for songtuple in songinfo if search_string in songtuple[0]]
+       songinfo = [songtuple for songtuple in songinfo 
+                    if search_string.lower() in songtuple[0].lower()]
 
     return render_template('index.html', songlist=songinfo, form=search, searchitem=search_string)
 
