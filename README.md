@@ -33,11 +33,7 @@ docker run --name=spotifydb -e MYSQL_ROOT_PASSWORD=mypassword -e MYSQL_DATABASE=
 docker build -t musicapp .
 docker run -p 5002:5002 --name=musicapp musicapp
 ```
-
-The webpage should be accessible at localhost:5002. Note for the moment the search bar does nothing. For Flask to be able to find/play the songs, the mp3 files should be placed in the static folder. 
-
-Issue: Can Flask play mp3 files directly from the bucket? It seems it can access information and file names but not the mp3 files themselves. You must copy the mp3 files into static for Flask to be able to find them. Note that the static folder is hardcoded into 
-index.html for now.
+The webpage should be accessible at localhost:5002. 
 
 # Orchestration
 The above could/should be orchestrated using Docker compose or Kubernetes.
