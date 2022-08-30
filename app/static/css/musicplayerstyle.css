@@ -51,7 +51,7 @@
 
     /*Resize the wrap to see the search bar change!*/
     .wrap{
-    width: 30%;
+    width: 70%;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -68,7 +68,7 @@
 @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
 *,*:before,*:after{outline:0;-webkit-box-sizing:border-box;box-sizing:border-box;}
-input,button{ width: 50%;
+input,button{ width: 70%;
     height: 36px;
     border: 2px solid rgba(0, 0, 0, 0.623);
     background: #fff8f8a9;
