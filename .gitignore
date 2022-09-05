@@ -129,7 +129,9 @@ dmypy.json
 .pyre/
 
 app/static/.minio.sys/*
-app/kubernetes/.minio.sys/*
+app/static/songs/*
+kubernetes/static/.minio.sys/*
+kubernetes/static/songs/*
 
 .vscode/*
 
