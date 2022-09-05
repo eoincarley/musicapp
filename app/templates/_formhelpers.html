@@ -3,7 +3,7 @@
         {{ field.label }}
     </dt>
     <dd>
-        <div style="width: 600px; margin:0 auto;">
+        <div>
          {{ field(**kwargs)|safe }}
         </div>
         {% if field.errors %}
