@@ -128,9 +128,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+app/static/.minio.sys/*
+app/kubernetes/.minio.sys/*
 
-.vscode/
-app/static/.minio.sys/
+.vscode/*
+
 app/static/songs/
-kubernetes/static/.minio.sys/
-kubernetes/static/songs/
+
+
+

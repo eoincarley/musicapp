@@ -80,9 +80,9 @@ def get_minio_client(access, secret):
     # Note 172.17.0.2 is the address of the minio container that the Flask container needs.
     # If Flask is not running in its own container then localhost will work.
     # Note the container IP was not providing the mp3 objects. Replaced with the docker gateway
-    # IP and that seems to have worked.
+    # IP and that seems to have worked. 192.168.0.234
     client = Minio(
-        '192.168.0.234:9000', 
+        'localhost:9000', 
         access_key = access,
         secret_key = secret,
         secure = False
