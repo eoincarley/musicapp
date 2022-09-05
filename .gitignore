@@ -134,8 +134,3 @@ kubernetes/static/.minio.sys/*
 kubernetes/static/songs/*
 
 .vscode/*
-
-app/static/songs/
-
-
-
