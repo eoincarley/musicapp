@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/musicplayerstyle.css">
+</head>
+<body>
+
+    <div class="wrap">
+        <h1> <centre>MusicPlayer</centre>  </h1>
+
+        <div class="search">
+            {% from "_formhelpers.html" import render_field %}
+            <form method="post">
+                <dl>
+                        {{ render_field(form.search) }}
+                </dl>
+            </form>
+           <!--
+           <button type="submit" class="searchButton">
+             <i class="fa fa-search"></i>
+          </button>
+            -->
+        </div>
+        
+        <div class="simple-audio-player" id="simp" data-config='{"shide_top":false,"shide_btm":false,"auto_load":false}'>
+        <div class="simp-playlist">
+          <ul>
+            {%- for song in songlist -%}
+                <li><span class="simp-source" data-src="{{song[1]}}">{{song[0]}}</span><span class="simp-desc">{{song[0]}}</span></li>
+            {% endfor -%}  
+          </ul>
+        </div>
+        </div>  
+        <!--
+        {%- for song in songlist -%}
+        <audio controls>
+          <source src="{{song[1]}}" type="audio/ogg">
+        </audio>
+        {% endfor -%}  
+        -->
+     </div>
+
+     <script type="text/javascript" src="static/js/mediaplayer.js"></script>
+     <script>
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+     </script>
+
+</body>
+</html>

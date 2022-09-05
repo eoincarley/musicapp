@@ -1,0 +1,8 @@
+numpy==1.21.5
+Flask==2.2.2
+Minio==7.1.11
+Flask-SQLAlchemy==2.5.1
+Flask-WTF==1.0.1
+kubernetes==24.2.0
+pymysql
+cryptography
