@@ -1,9 +1,9 @@
-# Musicapp app using Docker.
+# Musicapp app using Docker
 
 This exercise aims to build a Minio container that stores a number of music files. A container
-running MySQL adds music file info to a database. A container runnung Flask serves up a webpage
+running MySQL adds music file info to a database. A container running Flask serves up a webpage
 to display song information and play the music files. The folder 'app' contains everything to
-deploy the app using Docker. Below you will find the instructions on deployment in Kubernetes.
+deploy the app using Docker. 
 
 ## Minio Container
 Run the Minio container using the command in app/minio/minio-run. 
@@ -37,7 +37,8 @@ The webpage should be accessible at localhost:5002.
 
 # Musicapp using Kubernetes
 
-For the kubernetes deployments see the spotify/kubernetes folder. All yaml files to create pods, deployments and services are placed here. The goal is to first create the Minio and MySQL pods and services. After this you need to build the musicapp docker image and push it to a docker registry (hub.docker.com). Then deploy a kubernetes pod with this custom image.
+For the kubernetes deployments see the spotify/kubernetes folder. All yaml files to create pods, deployments and services are placed here. The goal is to first create the Minio and MySQL pods and services. After this you need to build the musicapp docker image and push it to a docker registry (hub.docker.com). Then deploy a kubernetes pod with this custom image. The folder 'kubernetes' contains everything to
+deploy the app using Kubernetes.
 
 ## Kubernetes - Minio
 Firstly create the minio pod using
