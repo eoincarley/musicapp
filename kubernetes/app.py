@@ -17,7 +17,7 @@ app.config["MYSQL_DATABASE_PASSWORD"] = "mypassword"
 app.config["MYSQL_DATABASE_DB"] = "spotifydb"
 app.config["MYSQL_DATABASE_HOST"] = "mysql-controller"
 app.config["MYSQL_DATABASE_PORT"] = "30006"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@10.102.154.88:3306/spotifydb' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@10.100.30.214:3306/spotifydb' 
 db = SQLAlchemy(app)
 
 
@@ -80,7 +80,7 @@ def insert_song_db(minio_objs):
     return None
 
 
-def get_minio_client(access, secret):
+def get_minio_client(access, secret, minio_endpoint='localhost'):
 
     # Note 172.17.0.2 is the address of the minio container that the Flask container needs.
     # If Flask is not running in its own container then localhost will work.
@@ -89,9 +89,9 @@ def get_minio_client(access, secret):
     #config.load_incluster_config()
     #api = client.CoreV1Api()
     #service = api.read_namespaced_service(name="minio-service", namespace="default")
-    #minio_endpoint = ''.join((service, ':9000'))
+
     minio_client = Minio(
-        '10.108.166.230:9000', 
+        minio_endpoint, 
         access_key = access,
         secret_key = secret,
         secure = False
@@ -104,7 +104,10 @@ def get_minio_client(access, secret):
 def home():
 
     # Setup Minio client, get data and add it to the database
-    minio_client = get_minio_client('testkey', 'secretkey')
+    minio_port = ':9000'
+    minio_service = 'minio-service'
+    minio_endpoint = ''.join((minio_service, minio_port))
+    minio_client = get_minio_client('testkey', 'secretkey', minio_endpoint=minio_endpoint)
     bucket_name = 'songs'
     songs = minio_client.list_objects(bucket_name)
     insert_song_db(songs)
@@ -120,7 +123,7 @@ def home():
     songnames = [obj.object_name
                     for obj in minio_client.list_objects(bucket_name)]
 
-    songurls = [minio_client.presigned_get_object("songs", obj.object_name)
+    songurls = [minio_client.presigned_get_object("songs", obj.object_name).split('?')[0].replace(minio_service, 'localhost')
                     for obj in minio_client.list_objects(bucket_name)]
 
     songinfo = list(zip(songnames, songurls))

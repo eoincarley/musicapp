@@ -7,7 +7,8 @@ metadata:
 spec:
   containers:
   - name: musicapp
-    image: eoincarley/musicapp:latest
+    image: musicapp:latest
+    imagePullPolicy: Never
     ports:
     - containerPort: 5002
       name: musicapp
