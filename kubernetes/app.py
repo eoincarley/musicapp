@@ -1,5 +1,4 @@
 
-
 import os
 import datetime
 import numpy as np
@@ -12,7 +11,6 @@ from minio.error import S3Error
 from flask_sqlalchemy import SQLAlchemy
 from forms import MusicSearchForm
 from kubernetes import client, config
-
 
 pymysql.install_as_MySQLdb()
 app = Flask(__name__)
@@ -134,23 +132,42 @@ def home():
     '''
     Flask home route definition.
     '''
-    # Setup Minio client, get data and add it to the database
+    #--------------------------------------------------------#
+    #    Define bucket, Minio endpoint. Setup Minio client
+    #
+    bucket_name = 'songs'
     minio_port = ':9000'
     minio_service = 'minio-service'
     minio_endpoint = ''.join((minio_service, minio_port))
-    minio_client = get_minio_client('testkey', 'secretkey', minio_endpoint=minio_endpoint)
-    bucket_name = 'songs'
-    songs = minio_client.list_objects(bucket_name)
-    insert_song_db(songs)
+    minio_client = get_minio_client('testkey', 'secretkey', 
+                                    minio_endpoint=minio_endpoint)
 
-    # Receive data from the search item.
-    search = MusicSearchForm(request.form)
-    if request.method == 'POST':
-        search_string = search.data['search']
-    else:
-        search_string = None
-       
-    # Return song names and file locations. Could render this from the DB.
+    #---------------------------------------------------#
+    #    Create a bucket if not already created.
+    #
+    try:
+        if (not minio_client.bucket_exists(bucket_name)):
+            minio_client.make_bucket(bucket_name)
+        else:
+            print('Bucket \'%s\' already exists' %(bucket_name))
+    except S3Error as exc:
+        print("Error occurred during bucket query/creation:", exc)
+    
+    songs = minio_client.list_objects(bucket_name)
+
+    #---------------------------------------------------#
+    #     Insert song info into MySQL database.
+    #
+    try:
+        insert_song_db(songs)
+    except:
+        print('Error inserting songs into database.')
+
+    
+    #---------------------------------------------------#
+    #    Return song names and file locations. 
+    #    Could/Should render this from the DB.
+    #
     songnames = [obj.object_name
                     for obj in minio_client.list_objects(bucket_name)]
 
@@ -159,9 +176,15 @@ def home():
 
     songinfo = list(zip(songnames, songurls))
 
-    # If search item request, search songinfo. This could also be done from the db.
-    # If song is in db then search the minio bucket for the song. That would prevent
-    # lots of search items being returned many times.
+    #---------------------------------------------------#
+    #    If search item request, search songinfo. 
+    #    This could also be done from the DB.
+    search = MusicSearchForm(request.form)
+    if request.method == 'POST':
+        search_string = search.data['search']
+    else:
+        search_string = None
+
     if search_string: songinfo = [songtuple for songtuple in songinfo 
                     if search_string.lower() in songtuple[0].lower()]
 
