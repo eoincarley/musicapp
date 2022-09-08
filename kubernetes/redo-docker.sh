@@ -1,3 +1,3 @@
-kubectl delete pod musicapp
+kubectl delete deployment musicapp-deploy
 docker build -t musicapp:latest .
-kubectl create -f musicapp-pod.yaml
+kubectl create -f musicapp-deployment.yaml

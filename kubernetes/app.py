@@ -1,30 +1,38 @@
+
+
+import os
+import datetime
+import numpy as np
+import pymysql
+import datetime
+
 from flask import Flask, flash, render_template, request, redirect
 from minio import Minio
 from minio.error import S3Error
 from flask_sqlalchemy import SQLAlchemy
 from forms import MusicSearchForm
 from kubernetes import client, config
-import datetime
-import pymysql
-import os
-import datetime
-import numpy as np
+
 
 pymysql.install_as_MySQLdb()
 app = Flask(__name__)
-app.config["MYSQL_DATABASE_USER"] = "root"
-app.config["MYSQL_DATABASE_PASSWORD"] = "mypassword"
-app.config["MYSQL_DATABASE_DB"] = "spotifydb"
-app.config["MYSQL_DATABASE_HOST"] = "mysql-controller"
-app.config["MYSQL_DATABASE_PORT"] = "30006"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@10.100.30.214:3306/spotifydb' 
+# The Kubernetes mysql service name doesn't work in the database URI. Only the IP address of the service.
+# Need to use the Kubernetes API to access this IP since it is dynamic. Can't keep the hardcoded IP!
 db = SQLAlchemy(app)
 
 
 class dbSongs(db.Model):
+    '''
+        Class to define the Songs table columns for the MySQL database.
 
-    # Defining the Songs table columns for the MySQL database.
+        args:
+            db: A db object from SQLAlchemy.
 
+        Returns:
+            A string representation of db columns.
+
+    '''
     id = db.Column(db.String(255), primary_key=True)
     songname = db.Column(db.String(255))
     artist = db.Column(db.String(255))
@@ -49,18 +57,27 @@ class dbSongs(db.Model):
 
 
 def insert_song_db(minio_objs):
-  
+    """
+    Function to insert songs from a Minio client object into 
+    the dbSongs database table.
+
+    args: 
+        minio_objs: Minio Object list returned by a connection to a minio bucket.
+                    e.g. songobjects = minio_client.list_objects(bucketname)
+    
+    Returns: 
+        None
+
+    Notes: This function could be improved a lot:
+            # Loop through Minio objects and check for duplicates in the database.
+            # This loop will become expensive for a large amount of objects.
+            # Replace it by SQL query of which song ids already exist in db.
+            # Note iteration over the minio object also means you lose access
+            # to the data. This is because the generator in the loop is yielding
+            # values over a stream that are not stored in memory, so they are lost
+            # Another call to the minio client will retrieve the data again.
+    """
     db.create_all()
-
-    # NB: This function could be improved a lot:
-
-    # Loop through Minio objects and check for duplicates in the database.
-    # This loop will become expensive for a large amount of objects.
-    # Replace it by SQL query of which song ids already exist in db.
-    # Note iteration over the minio object also means you lose access
-    # to the data. This is because the generator in the loop is yielding
-    # values over a stream that are not stored in memory, so they are lost
-    # Another call to the minio client will retrieve the data again.
     
     for minio_obj in minio_objs:
         instance = dbSongs.query.filter_by(id=minio_obj.etag).first()
@@ -81,17 +98,29 @@ def insert_song_db(minio_objs):
 
 
 def get_minio_client(access, secret, minio_endpoint='localhost'):
+    """
+    Function to return a minio client object.
 
-    # Note 172.17.0.2 is the address of the minio container that the Flask container needs.
+    args: 
+        access (str): Username access
+        secret (str): password
+
+    keywords:
+        minio_endpoint (str): The host to connect to. Will accept a Kubernetes
+                              service name if one exists.
+    
+    Returns: 
+        minio client object.
+
+    Notes: # Note 172.17.0.2 is the address of the minio container that the Flask container needs.
     # If Flask is not running in its own container then localhost will work.
     # Note the container IP was not providing the mp3 objects. Replaced with the docker gateway
     # IP and that seems to have worked. 192.168.0.234
     #config.load_incluster_config()
     #api = client.CoreV1Api()
     #service = api.read_namespaced_service(name="minio-service", namespace="default")
-
-    minio_client = Minio(
-        minio_endpoint, 
+    """
+    minio_client = Minio(minio_endpoint, 
         access_key = access,
         secret_key = secret,
         secure = False
@@ -102,7 +131,9 @@ def get_minio_client(access, secret, minio_endpoint='localhost'):
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
-
+    '''
+    Flask home route definition.
+    '''
     # Setup Minio client, get data and add it to the database
     minio_port = ':9000'
     minio_service = 'minio-service'
@@ -131,8 +162,7 @@ def home():
     # If search item request, search songinfo. This could also be done from the db.
     # If song is in db then search the minio bucket for the song. That would prevent
     # lots of search items being returned many times.
-    if search_string:
-       songinfo = [songtuple for songtuple in songinfo 
+    if search_string: songinfo = [songtuple for songtuple in songinfo 
                     if search_string.lower() in songtuple[0].lower()]
 
     return render_template('index.html', songlist=songinfo, form=search, searchitem=search_string)
