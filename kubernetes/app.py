@@ -12,9 +12,9 @@ from flask_sqlalchemy import SQLAlchemy
 from forms import MusicSearchForm
 from kubernetes import client, config
 
-pymysql.install_as_MySQLdb()
+pymysql.install_as_MySQLdb() 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@10.100.30.214:3306/spotifydb' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mypassword@10.109.196.40:3306/spotifydb' 
 # The Kubernetes mysql service name doesn't work in the database URI. Only the IP address of the service.
 # Need to use the Kubernetes API to access this IP since it is dynamic. Can't keep the hardcoded IP!
 db = SQLAlchemy(app)
