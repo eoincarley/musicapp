@@ -85,9 +85,11 @@ kubectl create -f mysql-service.yaml
 
 Now visit localhost:5002 to see the musicapp homepage. If mp3 files are in the 'songs' bucket on Minio they should show up in the musicapp player.
 
-# Current Issues
+## Cluster Role Binding
 
-* **MySQL service name not recognised by SQLAlchemy** - Currently the Kubernetes service IP for the MySQL pod is hardcoded into app.py. This is not ideal, as the service IPs change on pod redployment. I tried the mysql service name in SQLAlchemy database URI definition in app.py but it does not work. Need to implement the Kubernetes Python API to get the IPs from the service names.
+Note in order to use the Python API for kubernetes from within a pod you must define a cluster role  and cluster role binding. See musicapp-cluster-role. This allows the user to read things like services etc.
+
+# Current Issues
 
 * **Minio service name not streaming songs** - The 'minio-service' name works in getting Flask connected to the minio bucket and song names and urls can be read from the 'songs' bucket. However, the songs cannot be streamed/played using the preseigned url returned by Minio. To get around this I've implemented a cheap hack in app.py, where the url 'minio-service:9000' is replaced with 'localhost:9000'. The app can play music if the url is with localhost.
 
