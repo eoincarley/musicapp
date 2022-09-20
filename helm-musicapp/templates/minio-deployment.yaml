@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: minio-deploy-1
+  name: minio-deploy
   labels:
     name: minio-deplay
     app: musicapp
