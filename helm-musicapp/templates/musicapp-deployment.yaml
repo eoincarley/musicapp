@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: musicapp-deploy
+  labels:
+    name: musicapp-deploy
+    app: musicapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: musicapp
+  template:
+    metadata:
+      labels:
+        app: musicapp
+      name: musicapp
+    spec:
+      containers:
+      - name: musicapp
+        image: musicapp:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5002
+          name: musicapp

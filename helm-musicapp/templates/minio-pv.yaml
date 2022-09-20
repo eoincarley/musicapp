@@ -1,0 +1,32 @@
+#
+# First deploy a persistent volume.
+#
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: minio-pv
+  labels:
+    type: local
+spec:
+  storageClassName: pv-minio 
+  capacity:
+    storage: 300Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: static
+#
+# Now do a persistent volume claim.
+#
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: minio-pvc
+spec:
+  storageClassName: pv-minio 
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi

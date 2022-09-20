@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deploy
+  labels:
+    name: mysql-deploy
+    app: musicapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: musicapp
+  template:
+    metadata:
+      name: mysql-pod
+      labels: 
+        name: mysql-pod
+        app: musicapp
+    spec:
+      containers:
+        - name: spotifydb
+          image: mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "mypassword"
+            - name: MYSQL_DATABASE
+              value: "spotifydb"
+
