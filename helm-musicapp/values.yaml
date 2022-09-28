@@ -4,3 +4,9 @@
 
 app:
   name: musicapp
+
+ports:
+  mysql: 3306
+  minio: 9000
+  minioconsole: 9001
+  flask: 5002

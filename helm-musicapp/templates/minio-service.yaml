@@ -7,13 +7,11 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 9000
-    targetPort: 9000
-    #nodePort: 30010
+  - port: {{ .Values.ports.minio }}
+    targetPort: {{ .Values.ports.minio }}
     name: minio
-  - port: 9001
-    targetPort: 9001
-    #nodePort: 30011
+  - port: {{ .Values.ports.minioconsole }}
+    targetPort: {{ .Values.ports.minioconsole }}
     name: minio-console
   selector:
     app: minio

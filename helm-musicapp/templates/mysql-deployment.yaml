@@ -4,7 +4,7 @@ metadata:
   name: mysql-deploy
   labels:
     name: mysql-deploy
-    app: musicapp
+    app: {{ .Values.app.name }}
 spec:
   replicas: 1
   selector:
@@ -21,7 +21,7 @@ spec:
         - name: spotifydb
           image: mysql
           ports:
-            - containerPort: 3306
+            - containerPort: {{ .Values.ports.mysql }}
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "mypassword"

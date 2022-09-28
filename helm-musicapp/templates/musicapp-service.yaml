@@ -8,8 +8,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 5002
-      targetPort: 5002
-      #nodePort: 30002
+    - port: {{ .Values.ports.flask }}
+      targetPort: {{ .Values.ports.flask }}
   selector:
     app: musicapp

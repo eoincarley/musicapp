@@ -8,9 +8,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 3306
-      targetPort: 3306 
-    #  nodePort: 30006
+    - port: {{ .Values.ports.mysql }}
+      targetPort: {{ .Values.ports.mysql }} 
   selector:
     name: mysql-pod
     app: musicapp

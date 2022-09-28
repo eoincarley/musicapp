@@ -4,7 +4,7 @@ metadata:
   name: minio-deploy
   labels:
     name: minio-deplay
-    app: musicapp
+    app: {{ .Values.app.name }}
 spec:
   replicas: 1
   selector: 
@@ -23,11 +23,11 @@ spec:
         - /bin/bash
         - -c
         args: 
-        - minio server /data --console-address :9001
+        - minio server /data --console-address :{{ .Values.ports.minioconsole }}
         ports:
-        - containerPort: 9000
+        - containerPort: {{ .Values.ports.minio }}
           name: minio
-        - containerPort: 9001
+        - containerPort: {{ .Values.ports.minioconsole }}
           name: minio-console
         env:
         - name: MINIO_ROOT_USER
@@ -40,5 +40,5 @@ spec:
       volumes:
       - name: localvolume
         hostPath: # MinIO generally recommends using locally-attached volumes
-          path: static # Specify a path to a local drive or volume on the Kubernetes worker node. Note this is not working in WSL.
+          path: /run/desktop/mnt/host/wsl/miniovolume # Specify a path to a local drive or volume on the Kubernetes worker node. Note this is not working in WSL.
           type: DirectoryOrCreate # The path to the last directory must exist

@@ -2,7 +2,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: default
-  name: service-reader
+  name: musicapp-service-reader
 rules:
 - apiGroups: ["*"] # "" indicates the core API group
   resources: ["services"]
@@ -11,11 +11,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: service-reader-pod
+  name: musicapp-service-reader-pod
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: service-reader
+  name: musicapp-service-reader
 subjects:
 - kind: ServiceAccount
   name: default
