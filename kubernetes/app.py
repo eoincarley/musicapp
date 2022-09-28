@@ -130,6 +130,16 @@ def get_minio_client(access, secret, minio_endpoint='localhost'):
 
     return  minio_client
 
+def get_songinfo(bucket_name, minio_client, minio_service):
+
+    songnames = [obj.object_name
+                    for obj in minio_client.list_objects(bucket_name)]
+
+    songurls = [minio_client.presigned_get_object(bucket_name, obj.object_name).split('?')[0].replace(minio_service, 'localhost')
+                    for obj in minio_client.list_objects(bucket_name)]
+
+    return list(zip(songnames, songurls))
+
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
@@ -140,9 +150,9 @@ def home():
     #    Define bucket, Minio endpoint. Setup Minio client
     #
     bucket_name = 'songs'
-    minio_port = ':9000'
+    minio_port = '9000'
     minio_service = 'minio-service'
-    minio_endpoint = ''.join((minio_service, minio_port))
+    minio_endpoint = ':'.join((minio_service, minio_port))
     minio_client = get_minio_client('testkey', 'secretkey', 
                                     minio_endpoint=minio_endpoint)
 
@@ -172,13 +182,7 @@ def home():
     #    Return song names and file locations. 
     #    Could/Should render this from the DB.
     #
-    songnames = [obj.object_name
-                    for obj in minio_client.list_objects(bucket_name)]
-
-    songurls = [minio_client.presigned_get_object("songs", obj.object_name).split('?')[0].replace(minio_service, 'localhost')
-                    for obj in minio_client.list_objects(bucket_name)]
-
-    songinfo = list(zip(songnames, songurls))
+    songinfo = get_songinfo(bucket_name, minio_client, minio_service)
 
     #---------------------------------------------------#
     #    If search item request, search songinfo. 
