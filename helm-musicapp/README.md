@@ -29,3 +29,11 @@ For Minio:
 ```
 kubectl port-forward service/minio-service 9000:9000 9001:9001
 ```
+
+## Note on the musicapp image
+
+If running this helm chart for the first time, you need to have already built the musicapp image and have it accessible on your local machine. To do this you can cd to the spotify/kubernetes folder and run 
+
+```
+docker build -t musicapp:latest .
+```
