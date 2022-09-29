@@ -15,7 +15,7 @@ from kubernetes import client, config
 
 config.load_incluster_config()
 api = client.CoreV1Api()
-service = api.read_namespaced_service(name="mysql-controller", namespace="default")
+service = api.read_namespaced_service(name="mysql-service", namespace="default")
 
 pymysql.install_as_MySQLdb() 
 app = Flask(__name__)
