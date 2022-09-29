@@ -4,7 +4,7 @@ metadata:
   name: mysql-controller
   labels:
     name: mysql-controller
-    app: musicapp
+    app: {{ .Values.app.name }}
 spec:
   type: ClusterIP
   ports:
@@ -12,4 +12,4 @@ spec:
       targetPort: {{ .Values.ports.mysql }} 
   selector:
     name: mysql-pod
-    app: musicapp
+    app: {{ .Values.app.name }}
